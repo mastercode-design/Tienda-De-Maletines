@@ -229,7 +229,7 @@ export default function TiendaMaletines() {
       </div>
 
       <footer className="bg-gradient-to-r from-blue-900 via-purple-900 to-indigo-900 text-white p-8 mt-12 text-center">
-        <p className="text-xl font-bold bg-gradient-to-r from-yellow-300 to-pink-400 bg-clip-text text-transparent">© 2026 Tu Tienda de Maletines - Cali, Colombia 🇨🇴</p>
+        <p className="text-xl font-bold bg-gradient-to-r from-yellow-300 to-pink-400 bg-clip-text text-transparent">© 2026 M.G Inversion, Tu tienda de maletines - Cali, Colombia 🇨🇴</p>
       </footer>
     </div>
   )
