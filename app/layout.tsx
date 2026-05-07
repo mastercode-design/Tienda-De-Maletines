@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "M.G Inversion",
-  description: "M.G Inversion",
+  title: "IMPERIOJG19",
+  description: "IMPERIOJG19",
 };
 
 export default function RootLayout({
