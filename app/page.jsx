@@ -10,18 +10,20 @@ export default function TiendaMaletines() {
   const [notificacion, setNotificacion] = useState('')
 
   useEffect(() => {
-    const maletines = [
-      { id: 1, nombre: 'Maletín Tiburon', precio: 75000, imagen: 'background.jpg', stock: 1 },
-      { id: 2, nombre: 'Conjunto Blanco', precio: 150000, imagen: 'conjuntonblanco.jpg', stock: 1 },
-      { id: 3, nombre: 'Maletas deportivas', precio: 150000, imagen: 'maleta.jpg', stock: 5 },
-      { id: 4, nombre: 'Monastery', precio: 75000, imagen: 'monastery.jpg', stock: 0 }
-    ]
-    setProductos(maletines)
-    setCargando(false)
+    fetch('/api/productos')
+      .then(res => res.json())
+      .then(data => {
+        setProductos(Array.isArray(data) ? data : [])
+        setCargando(false)
+      })
+      .catch(() => {
+        setProductos([])
+        setCargando(false)
+      })
   }, [])
 
-  const productosFiltrados = productos.filter(p => 
-    p.nombre.toLowerCase().includes(busqueda.toLowerCase())
+  const productosFiltrados = (productos || []).filter(p => 
+    p?.nombre?.toLowerCase().includes(busqueda.toLowerCase())
   )
 
   function agregarAlCarrito(producto) {
@@ -56,7 +58,7 @@ export default function TiendaMaletines() {
     carrito.forEach(item => {
       mensaje += `• ${item.nombre} x${item.cantidad} = $${(item.precio * item.cantidad).toLocaleString('es-CO')}\n`
     })
-    mensaje +=` \n*TOTAL: $${total.toLocaleString('es-CO')}*`
+    mensaje += ` \n*TOTAL: $${total.toLocaleString('es-CO')}*`
     mensaje += `\n\nNombre completo:`
     const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`
     window.open(url, '_blank')
@@ -156,7 +158,7 @@ export default function TiendaMaletines() {
                   </div>
                   <div className="p-8">
                     <h3 className="text-xl font-light mb-3 tracking-wide">{producto.nombre}</h3>
-                    <p className="text-3xl font-thin text-yellow-500 mb-6 tracking-tight">
+                    <p className="text-3xl font-thin text-yellow-500 mb-6 tracking-tight" suppressHydrationWarning>
                       ${producto.precio.toLocaleString('es-CO')}
                     </p>
                     <button 
@@ -190,7 +192,7 @@ export default function TiendaMaletines() {
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex-1 pr-4">
                           <p className="font-light text-sm">{item.nombre}</p>
-                          <p className="text-xs text-white/40 mt-1">${item.precio.toLocaleString('es-CO')}</p>
+                          <p className="text-xs text-white/40 mt-1" suppressHydrationWarning>${item.precio.toLocaleString('es-CO')}</p>
                         </div>
                         <button onClick={() => quitarDelCarrito(item.id)} className="text-white/40 hover:text-yellow-500 text-xl font-thin">×</button>
                       </div>
@@ -198,7 +200,7 @@ export default function TiendaMaletines() {
                         <button onClick={() => cambiarCantidad(item.id, item.cantidad - 1)} className="border border-white/20 w-8 h-8 text-sm hover:border-yellow-500 transition">-</button>
                         <span className="text-sm w-6 text-center">{item.cantidad}</span>
                         <button onClick={() => cambiarCantidad(item.id, item.cantidad + 1)} className="border border-white/20 w-8 h-8 text-sm hover:border-yellow-500 transition">+</button>
-                        <p className="ml-auto text-sm text-yellow-500">${(item.precio * item.cantidad).toLocaleString('es-CO')}</p>
+                        <p className="ml-auto text-sm text-yellow-500" suppressHydrationWarning>${(item.precio * item.cantidad).toLocaleString('es-CO')}</p>
                       </div>
                     </div>
                   ))}
@@ -207,7 +209,7 @@ export default function TiendaMaletines() {
                 <div className="pt-6 border-t border-white/10">
                   <div className="flex justify-between items-center mb-6">
                     <span className="text-sm uppercase tracking-[0.3em] text-white/60">Total</span>
-                    <span className="text-2xl font-thin text-yellow-500">
+                    <span className="text-2xl font-thin text-yellow-500" suppressHydrationWarning>
                       ${total.toLocaleString('es-CO')}
                     </span>
                   </div>
@@ -224,7 +226,7 @@ export default function TiendaMaletines() {
       {/* FOOTER */}
       <footer className="border-t border-white/10 mt-20">
         <div className="max-w-7xl mx-auto px-6 py-12 text-center">
-          <p className="text-white/40 text-xs uppercase tracking-[0.3em]">© 2026 IMPERIOJG19, Cali-Colombia</p>
+          <p className="text-white/40 text-xs uppercase tracking-[0.3em]">2026 IMPERIOJG19, Cali-Colombia</p>
         </div>
       </footer>
     </div>

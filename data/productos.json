@@ -1,0 +1,16 @@
+[
+  {
+    "nombre": "maletin tiburon",
+    "precio": 75000,
+    "stock": 2,
+    "imagen": "/uploads/1778192876446-background.jpeg",
+    "id": 1778192888703
+  },
+  {
+    "nombre": "conjunto blanco",
+    "precio": 15000,
+    "stock": 1,
+    "imagen": "/uploads/1778192947330-conjuntonblanco.jpeg",
+    "id": 1778192948799
+  }
+]

@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "IMPERIOJG19",
-  description: "IMPERIOJG19",
+  title: "IMPERIO JG19 - Maletines Premium",
+  description: "Tienda de maletines premium en Cali, Colombia",
 };
 
 export default function RootLayout({
@@ -23,11 +23,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="es" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
+      <body className="h-full antialiased">
+        {children}
+      </body>
     </html>
   );
 }
