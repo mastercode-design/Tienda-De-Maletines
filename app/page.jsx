@@ -12,10 +12,14 @@ export default function TiendaMaletines() {
 
   useEffect(() => {
     const maletines = [
-      { id: 1, nombre: 'Maleta Deportiva', precio: 200000, imagen: '/maleta.jpg', stock: 2 },
-      { id: 2, nombre: 'Maletin Monastery', precio: 170000, imagen: 'monastery.jpg', stock: 1 },
-      { id: 3, nombre: 'Maletin Tiburon', precio: 170000, imagen: 'tiburon.jpg', stock: 2 },
-      { id: 4, nombre: 'Conjunto Blanco', precio: 300000, imagen: 'conjuntonblanco.jpg', stock: 1 }
+      { id: 1, nombre: 'Maleta Deportiva', precio: 210000, imagen: '/maleta.jpg', stock: 2 },
+      { id: 2, nombre: 'Maletin Monastery', precio: 170000, imagen: '/monastery.jpg', stock: 0 },
+      { id: 3, nombre: 'Maletin Tiburon', precio: 170000, imagen: '/tiburon.jpg', stock: 0 },
+      { id: 4, nombre: 'Conjunto Blanco', precio: 300000, imagen: '/conjuntonblanco.jpg', stock: 1 },
+      { id: 5, nombre: 'Canguro o carriel de cuero', precio: 80000, imagen: '/peque.jpg', stock: 1 },
+      { id: 6, nombre: 'Tiburon aleta', precio: 170000, imagen: '/tibu.jpg', stock: 1 },
+      { id: 7, nombre: 'Maleta deportiva negra', precio: 210000, imagen: '/negra.jpg', stock: 1 },
+
     ]
     setProductos(maletines)
     setCargando(false)
