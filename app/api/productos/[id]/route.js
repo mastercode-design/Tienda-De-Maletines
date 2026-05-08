@@ -7,7 +7,7 @@ export async function DELETE(request, { params }) {
     const productos = await kv.get('productos') || [];
     
     // Filtra y quita el producto con ese id
-    const nuevosProductos = productos.filter(p => p.id != id);
+    const nuevosProductos = productos.filter(String(p.id) !== String(id));
     await kv.set('productos', nuevosProductos);
     
     return NextResponse.json({ success: true });
