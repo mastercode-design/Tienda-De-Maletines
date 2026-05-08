@@ -1,19 +1,22 @@
 import { kv } from '@vercel/kv'
-import { createProductsDAL } from '../../../../lib/dal/products'
 import { NextResponse } from 'next/server'
 
-const dal = createProductsDAL({ db: kv })
-
 export async function DELETE(request, { params }) {
-  try {
-    const { id } = params
-    console.log('Borrando producto ID:', id)
-    
-    await dal.delete(id)
-    
-    return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('Error en DELETE:', error)
-    return NextResponse.json({ success: false }, { status: 500 })
-  }
+  const idUrl = params.id
+  console.log('BORRAR ID:', idUrl)
+
+  const productos = await kv.get('productos') || []
+  console.log('ANTES:', productos.length, 'IDS:', productos.map(p => p.id))
+
+  const nuevos = productos.filter(p => String(p.id) !== String(idUrl))
+  console.log('DESPUÉS:', nuevos.length)
+  
+  await kv.set('productos', nuevos)
+  
+  console.log('GUARDADO. BORRADOS:', productos.length - nuevos.length)
+  
+  return NextResponse.json({ 
+    borrados: productos.length - nuevos.length,
+    quedan: nuevos.length 
+  })
 }
