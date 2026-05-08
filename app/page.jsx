@@ -1,5 +1,5 @@
 import { kv } from '@vercel/kv'
-import { createProductsDAL } from '@/lib/dal/products'
+import { createProductsDAL } from '../lib/dal/products'
 import { unstable_noStore as noStore } from 'next/cache'
 
 // ESTAS 3 LÍNEAS MATAN EL CACHÉ PARA SIEMPRE
