@@ -1,5 +1,6 @@
 import { kv } from '@vercel/kv'
 import { createProductsDAL } from '@/lib/dal/products'
+import { unstable_noStore as noStore } from 'next/cache'
 
 // ESTAS 3 LÍNEAS MATAN EL CACHÉ PARA SIEMPRE
 export const revalidate = 0
@@ -7,6 +8,7 @@ export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
 
 export default async function HomePage() {
+  noStore()
   // LEE DIRECTO DE KV - 0% ERRORES DE FETCH
   const db = kv
   const dal = createProductsDAL({ db })
