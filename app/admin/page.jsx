@@ -6,44 +6,90 @@ export default function Admin() {
   const [form, setForm] = useState({ nombre: '', descripcion: '', precio: '' })
   const [archivo, setArchivo] = useState(null)
   const [subiendo, setSubiendo] = useState(false)
+  const [progreso, setProgreso] = useState('')
   const inputFileRef = useRef(null)
 
   const cargarProductos = () => {
     fetch('/api/productos', { cache: 'no-store' })
-  .then(res => res.json())
-  .then(data => setProductos(data))
+ .then(res => res.json())
+ .then(data => setProductos(data))
   }
 
   useEffect(() => {
     cargarProductos()
   }, [])
 
+  // COMPRIME LA IMAGEN ANTES DE SUBIR
+  const comprimirImagen = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = (event) => {
+        const img = new Image()
+        img.src = event.target.result
+        img.onload = () => {
+          const canvas = document.createElement('canvas')
+          const MAX_WIDTH = 1200
+          const scaleSize = MAX_WIDTH / img.width
+          canvas.width = MAX_WIDTH
+          canvas.height = img.height * scaleSize
+
+          const ctx = canvas.getContext('2d')
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+
+          canvas.toBlob((blob) => {
+            const nuevoArchivo = new File([blob], file.name, {
+              type: 'image/jpeg',
+              lastModified: Date.now()
+            })
+            resolve(nuevoArchivo)
+          }, 'image/jpeg', 0.8) // 80% calidad
+        }
+      }
+    })
+  }
+
   const crearProducto = async (e) => {
     e.preventDefault()
     if (!archivo) return alert('Sube una imagen')
 
     setSubiendo(true)
+    setProgreso('Comprimiendo imagen...')
 
-    const response = await fetch(`/api/upload?filename=${archivo.name}`, {
-      method: 'POST',
-      body: archivo,
-    })
-    const blob = await response.json()
+    try {
+      // 1. COMPRIMIR
+      const archivoComprimido = await comprimirImagen(archivo)
+      setProgreso('Subiendo imagen...')
 
-    const res = await fetch('/api/productos', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({...form, imagen: blob.url })
-    })
+      // 2. SUBIR
+      const response = await fetch(`/api/upload?filename=${archivoComprimido.name}`, {
+        method: 'POST',
+        body: archivoComprimido,
+      })
+      const blob = await response.json()
 
-    if (res.ok) {
-      setForm({ nombre: '', descripcion: '', precio: '' })
-      setArchivo(null)
-      inputFileRef.current.value = ''
-      cargarProductos()
-      alert('✅ Producto creado')
+      setProgreso('Guardando producto...')
+
+      // 3. GUARDAR PRODUCTO
+      const res = await fetch('/api/productos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({...form, imagen: blob.url })
+      })
+
+      if (res.ok) {
+        setForm({ nombre: '', descripcion: '', precio: '' })
+        setArchivo(null)
+        inputFileRef.current.value = ''
+        cargarProductos()
+        alert('✅ Producto creado')
+      }
+    } catch (error) {
+      alert('Error al subir: ' + error.message)
     }
+
     setSubiendo(false)
+    setProgreso('')
   }
 
   const borrarProducto = async (id) => {
@@ -95,13 +141,18 @@ export default function Admin() {
               className="bg-white border-2 border-purple-500 p-4 rounded-xl w-full text-gray-900 font-semibold file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-purple-600 file:text-white file:font-bold hover:file:bg-purple-700 cursor-pointer"
               required
             />
+            {archivo && (
+              <p className="text-green-400 mt-2 text-sm">
+                📎 {archivo.name} - {(archivo.size / 1024 / 1024).toFixed(2)} MB
+              </p>
+            )}
           </div>
           <button
             type="submit"
             disabled={subiendo}
             className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white px-8 py-4 rounded-full font-black mt-6 w-full hover:scale-105 transition-all disabled:opacity-50 shadow-2xl text-lg"
           >
-            {subiendo? '⏳ Subiendo imagen...' : '🚀 Crear Producto'}
+            {subiendo? `⏳ ${progreso}` : '🚀 Crear Producto'}
           </button>
         </form>
 
