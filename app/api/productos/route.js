@@ -9,7 +9,8 @@ export async function GET() {
     const productos = await kv.get('productos') || []
     return NextResponse.json(productos)
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    console.log('ERROR GET KV:', error.message)
+    return NextResponse.json({ error: 'KV no conectado' }, { status: 500 })
   }
 }
 
@@ -31,7 +32,7 @@ export async function POST(request) {
     
     return NextResponse.json(nuevo)
   } catch (error) {
-    console.log('ERROR POST:', error.message)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    console.log('ERROR POST KV:', error.message)
+    return NextResponse.json({ error: 'KV no conectado o datos mal' }, { status: 500 })
   }
 }
