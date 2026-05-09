@@ -4,7 +4,6 @@ import { NextResponse } from 'next/server'
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
-// GET - Listar productos
 export async function GET() {
   try {
     const productos = await kv.get('productos') || []
@@ -14,7 +13,6 @@ export async function GET() {
   }
 }
 
-// POST - Crear producto
 export async function POST(request) {
   try {
     const body = await request.json()
@@ -22,7 +20,10 @@ export async function POST(request) {
     
     const nuevo = {
       id: Date.now().toString(),
-      ...body
+      nombre: body.nombre,
+      descripcion: body.descripcion,
+      precio: Number(body.precio),
+      imagen: body.imagen
     }
     
     productos.push(nuevo)
@@ -30,6 +31,7 @@ export async function POST(request) {
     
     return NextResponse.json(nuevo)
   } catch (error) {
+    console.log('ERROR POST:', error.message)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
