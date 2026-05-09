@@ -1,43 +1,27 @@
 'use client'
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState } from 'react'
 
 const CartContext = createContext()
 
 export function CartProvider({ children }) {
-  const [cart, setCart] = useState([])
+  const [carrito, setCarrito] = useState([])
 
-  // Cargar carrito de localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem('cart')
-    if (saved) setCart(JSON.parse(saved))
-  }, [])
-
-  // Guardar carrito
-  useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart))
-  }, [cart])
-
-  const addToCart = (product) => {
-    setCart(prev => {
-      const exists = prev.find(p => p.id === product.id)
-      if (exists) {
-        return prev.map(p =>
-          p.id === product.id? {...p, cantidad: p.cantidad + 1 } : p
+  const addToCart = (producto) => {
+    setCarrito(prev => {
+      const existe = prev.find(p => p.id === producto.id)
+      if (existe) {
+        return prev.map(p => 
+          p.id === producto.id ? {...p, cantidad: p.cantidad + 1} : p
         )
       }
-      return [...prev, {...product, cantidad: 1 }]
+      return [...prev, {...producto, cantidad: 1}]
     })
   }
 
-  const removeFromCart = (id) => {
-    setCart(prev => prev.filter(p => p.id!== id))
-  }
-
-  const total = cart.reduce((sum, p) => sum + (p.precio * p.cantidad), 0)
-  const cantidadTotal = cart.reduce((sum, p) => sum + p.cantidad, 0)
+  const cantidadTotal = carrito.reduce((sum, item) => sum + item.cantidad, 0)
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, total, cantidadTotal }}>
+    <CartContext.Provider value={{ carrito, addToCart, cantidadTotal }}>
       {children}
     </CartContext.Provider>
   )
