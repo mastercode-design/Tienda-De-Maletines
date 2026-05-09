@@ -1,9 +1,15 @@
 import { put } from '@vercel/blob'
 import { NextResponse } from 'next/server'
 
+export const runtime = 'nodejs'
+
 export async function POST(request) {
-  const file = request.body || await request.blob()
-  const filename = request.headers.get('x-filename') || 'image.jpg'
-  const blob = await put(filename, file, { access: 'public' })
-  return NextResponse.json({ url: blob.url })
+  const { searchParams } = new URL(request.url)
+  const filename = searchParams.get('filename')
+
+  const blob = await put(filename, request.body, {
+    access: 'public',
+  })
+
+  return NextResponse.json(blob)
 }

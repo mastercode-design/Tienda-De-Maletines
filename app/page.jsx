@@ -5,7 +5,7 @@ import { useCart } from './context/CartContext'
 export default function Home() {
   const [productos, setProductos] = useState([])
   const [loading, setLoading] = useState(true)
-  const { addToCart, cantidadTotal } = useCart()
+  const { addToCart, cantidadTotal, carrito } = useCart()
 
   const cargarProductos = () => {
     setLoading(true)
@@ -22,14 +22,37 @@ export default function Home() {
     cargarProductos()
   }, [])
 
+  const enviarWhatsApp = () => {
+    const numero = '573053680666' // <-- CAMBIA POR TU NÚMERO
+    let mensaje = 'Hola! Quiero pedir estos productos:%0A%0A'
+    let total = 0
+    carrito.forEach(item => {
+      mensaje += `*${item.nombre}* - Cant: ${item.cantidad} - $${item.precio * item.cantidad}%0A`
+      total += item.precio * item.cantidad
+    })
+    mensaje += `%0A*Total: $${total}*`
+    const url = `https://wa.me/${numero}?text=${mensaje}`
+    window.open(url, '_blank')
+  }
+
   if (loading) return <div className="p-8 text-center">Cargando productos...</div>
 
   return (
     <div className="p-8 max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Tienda de Maletines</h1>
-        <div className="bg-green-600 text-white px-4 py-2 rounded">
-          Carrito: {cantidadTotal}
+        <div className="flex gap-4 items-center">
+          <div className="bg-green-600 text-white px-4 py-2 rounded">
+            Carrito: {cantidadTotal}
+          </div>
+          {cantidadTotal > 0 && (
+            <button
+              onClick={enviarWhatsApp}
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            >
+              Pedir por WhatsApp
+            </button>
+          )}
         </div>
       </div>
 
@@ -44,10 +67,7 @@ export default function Home() {
               <p className="text-gray-600 mb-2">{p.descripcion}</p>
               <p className="text-2xl font-bold mb-4">${p.precio}</p>
               <button
-                onClick={() => {
-                  addToCart(p)
-                  alert('Agregado al carrito')
-                }}
+                onClick={() => addToCart(p)}
                 className="bg-blue-600 text-white px-4 py-2 rounded w-full hover:bg-blue-700"
               >
                 Agregar al carrito
